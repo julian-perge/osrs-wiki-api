@@ -10,8 +10,8 @@ import { OSRSWikiClient } from '../sdk/client.js';
 /**
  * OSRS Wiki MCP Server
  *
- * Provides Claude Code tools for searching and fetching pages from the
- * Old School RuneScape Wiki via the MediaWiki API.
+ * Provides Claude Code tools for searching, fetching, and rendering
+ * content from the Old School RuneScape Wiki via the MediaWiki API.
  */
 const server = new Server(
   {

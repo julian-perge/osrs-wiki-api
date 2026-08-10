@@ -30,6 +30,9 @@ const page = await client.page.getPage('Dragon Slayer II');
 
 // Plain-text intro
 const extract = await client.page.getExtract('Abyssal whip');
+
+// Render an image as ASCII art
+const ascii = await client.page.renderImage('Abyssal whip', 64);
 ```
 
 ### SDK Resources
@@ -37,7 +40,7 @@ const extract = await client.page.getExtract('Abyssal whip');
 | Resource | Methods |
 |----------|---------|
 | `client.search` | `query()`, `autocomplete()` |
-| `client.page` | `getPage()`, `getExtract()` |
+| `client.page` | `getPage()`, `getExtract()`, `getImageUrl()`, `renderImage()` |
 
 ---
 
@@ -46,7 +49,7 @@ const extract = await client.page.getExtract('Abyssal whip');
 Flat function exports for direct API access.
 
 ```typescript
-import { search, autocomplete, getPage, getExtract } from '@deansasek/osrs-wiki-api';
+import { search, autocomplete, getPage, getExtract, renderImage } from '@deansasek/osrs-wiki-api';
 ```
 
 ### search(query, options?)
@@ -80,13 +83,27 @@ Fetch the plain-text intro of a wiki page.
 
 ```typescript
 const extract = await getExtract('Abyssal whip');
-// Returns: "The abyssal whip is a ..."
+// Returns: "The abyssal whip is a level 70 melee weapon..."
+```
+
+### renderImage(title, width?)
+
+Render a wiki page's first image as ASCII art.
+
+```typescript
+const ascii = await renderImage('Abyssal whip', 64);
+// Returns:
+// Abyssal whip
+// ════════════════════════════════════════════════════════
+//   ░░▒▒▓▓████▒▒░░  ...
+```
 
 ### Other Functions
 
 | Function | Description |
 |----------|-------------|
 | `createClient(options?)` | Create a custom client with options |
+| `getImageUrl(filename)` | Resolve a raw image filename to its CDN URL |
 
 ---
 
@@ -117,6 +134,7 @@ Claude Code automatically detects `.mcp.json`:
 | `osrs_autocomplete` | Fast typeahead suggestions |
 | `osrs_get_page` | Fetch a wiki page (HTML, wikitext, categories, links) |
 | `osrs_get_extract` | Plain-text page intro |
+| `osrs_render_image` | Render a wiki page image as ASCII art |
 
 ### MCP Usage Examples
 
@@ -129,6 +147,9 @@ Claude uses: osrs_get_page with title="Fight Arena"
 
 User: Give me a quick summary of the Kal'gerion demon
 Claude uses: osrs_get_extract with title="Kalphite Queen"
+
+User: Show me the Abyssal whip as ASCII art
+Claude uses: osrs_render_image with title="Abyssal whip", width=64
 ```
 
 ---

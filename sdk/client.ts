@@ -5,13 +5,37 @@ import { BASE_URL, DEFAULT_TIMEOUT, DEFAULT_USER_AGENT } from './constants';
 import { SearchResource } from './resources/search';
 import { PageResource } from './resources/page';
 
+/**
+ * OSRS Wiki API Client
+ *
+ * Typed client for the Old School RuneScape Wiki MediaWiki API.
+ * Manages HTTP communication and provides resource-based access to API endpoints.
+ *
+ * @example
+ * import { OSRSWikiClient } from '@deansasek/osrs-wiki-api/sdk';
+ *
+ * const client = new OSRSWikiClient();
+ * const results = await client.search.query({ query: 'zulrah' });
+ * const page = await client.page.getPage('Zulrah');
+ */
 export class OSRSWikiClient {
+  /** Full-text search and autocomplete */
   public readonly search: SearchResource;
+
+  /** Page content, extracts, and image rendering */
   public readonly page: PageResource;
 
   protected readonly http: AxiosInstance;
   protected readonly baseUrl: string;
 
+  /**
+   * Create a new OSRS Wiki API client.
+   *
+   * @param options - Configuration options
+   * @param options.baseUrl - Wiki base URL (default: https://oldschool.runescape.wiki)
+   * @param options.timeout - Request timeout in ms (default: 10000)
+   * @param options.userAgent - User-Agent sent with every request
+   */
   constructor(options: OSRSWikiClientOptions = {}) {
     this.baseUrl = options.baseUrl ?? BASE_URL;
     this.http = axios.create({
@@ -27,6 +51,14 @@ export class OSRSWikiClient {
     this.page = new PageResource(this);
   }
 
+  /**
+   * Make a GET request to the MediaWiki API.
+   *
+   * @param params - MediaWiki API parameters (action, prop, etc.)
+   * @param config - Optional axios request config
+   * @returns Parsed JSON response
+   * @throws {OSRSWikiError} On network or API error
+   */
   async get<T = unknown>(params: Record<string, unknown>, config?: AxiosRequestConfig): Promise<T> {
     try {
       const response = await this.http.get<T>('/api.php', {
@@ -47,6 +79,11 @@ export class OSRSWikiClient {
     }
   }
 
+  /**
+   * Get the configured base URL.
+   *
+   * @returns The base URL string (e.g. 'https://oldschool.runescape.wiki')
+   */
   getBaseUrl(): string {
     return this.baseUrl;
   }

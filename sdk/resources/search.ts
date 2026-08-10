@@ -28,12 +28,31 @@ interface MediaWikiSearchResponse {
 
 type MediaWikiOpenSearchResponse = [string, string[], string?, string?];
 
+/**
+ * Search and autocomplete for wiki pages.
+ */
 export class SearchResource {
   constructor(private client: OSRSWikiClient) {}
 
   /**
-   * Full MediaWiki search — returns structured results with snippets.
-   * Endpoint: ?action=query&list=search
+   * Full-text wiki search returning structured results with HTML snippets.
+   *
+   * Uses MediaWiki's `query+search` action for comprehensive content search.
+   *
+   * @param options - Search options
+   * @param options.query - The search query string
+   * @param options.limit - Max results to return (default: 10)
+   * @param options.offset - Skip this many results for pagination (default: 0)
+   * @param options.what - Search scope: 'text' (content only), 'title' (titles only), or omit (both)
+   * @returns Search response with results array and total hit count
+   * @throws {OSRSWikiError} On API error
+   *
+   * @example
+   * const { results, totalhits } = await client.search.query({ query: 'zamorak', limit: 5 });
+   * for (const r of results) {
+   *   console.log(`${r.title} (pageid: ${r.pageid})`);
+   *   console.log(r.snippet); // HTML snippet with match highlighted
+   * }
    */
   async query(options: SearchOptions): Promise<SearchResponse> {
     const { query, limit = 10, offset = 0, what } = options;
@@ -69,8 +88,19 @@ export class SearchResource {
   }
 
   /**
-   * OpenSearch / autocomplete — fast suggestions as you type.
-   * Endpoint: ?action=opensearch
+   * Fast autocomplete/typeahead suggestions as the user types.
+   *
+   * Uses MediaWiki's `opensearch` action — optimized for real-time suggestions.
+   *
+   * @param options - Autocomplete options
+   * @param options.query - Partial query string (min 1 character)
+   * @param options.limit - Max suggestions to return (default: 10)
+   * @returns Autocomplete response with titles, descriptions, and URLs
+   * @throws {OSRSWikiError} On API error
+   *
+   * @example
+   * const { results } = await client.search.autocomplete({ query: 'zama' });
+   * // results[0].title === 'Zamorak'
    */
   async autocomplete(options: OpenSearchOptions): Promise<OpenSearchResponse> {
     const { query, limit = 10 } = options;
