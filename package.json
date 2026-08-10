@@ -1,6 +1,6 @@
 {
   "name": "osrs-wiki-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Unofficial API wrapper for the Old School RuneScape Wiki",
   "main": "dist/server.js",
   "types": "dist/server.d.ts",
