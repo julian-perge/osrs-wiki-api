@@ -13,18 +13,10 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Check if already tagged
         id: check
         run: |
-          git remote set-url origin git@github.com:deansasek/osrs-wiki-api.git
           TAG=$(git describe --exact-match --tags 2>/dev/null || echo "")
           if [[ -n "$TAG" ]]; then
             echo "Already tagged as $TAG, skipping publish"
@@ -50,14 +42,14 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add package.json
-          git commit -m "chore: bump version"
-          git tag "v$(node -p "require('./package.json').version")"
+          git commit -m \"chore: bump version\"
+          git tag \"v\$(node -p \"require('./package.json').version\")\"
           git push origin main --follow-tags
-          echo "@deansasek:registry=https://npm.pkg.github.com" >> ~/.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          echo \"@deansasek:registry=https://npm.pkg.github.com\" >> ~/.npmrc
+          echo \"//npm.pkg.github.com/:_authToken=\${{ secrets.NPM_TOKEN }}\" >> ~/.npmrc
           npm publish
 
       - name: Log skipped run
         if: steps.check.outputs.skip == 'true'
         run: |
-          echo "Version ${{ steps.check.outputs.tag }} already published, skipping"
+          echo \"Version \${{ steps.check.outputs.tag }} already published, skipping\"
