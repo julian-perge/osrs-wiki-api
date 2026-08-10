@@ -43,7 +43,7 @@ jobs:
           git config user.email "github-actions@github.com"
           git add package.json
           git commit -m 'chore: bump version'
-          git tag "v$(node -p \"require('./package.json').version\")"
+          git tag "v$(node -p "require('./package.json').version")"
           git push origin main --follow-tags
           echo "@deansasek:registry=https://npm.pkg.github.com" >> ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
