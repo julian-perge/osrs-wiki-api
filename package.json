@@ -1,0 +1,25 @@
+{
+  "name": "osrs-wiki-api",
+  "version": "0.1.0",
+  "description": "Unofficial API wrapper for the Old School RuneScape Wiki",
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/server.js",
+    "discover": "npx ts-node scripts/discover-apis.ts"
+  },
+  "dependencies": {
+    "axios": "^1.7.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.45.0",
+    "@types/node": "^20.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
