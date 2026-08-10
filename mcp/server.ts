@@ -79,6 +79,18 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ['title'],
         },
       },
+      {
+        name: 'osrs_render_image',
+        description: 'Render a wiki page image as ASCII art',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            title: { type: 'string', description: 'Page title (e.g. "Abyssal whip")' },
+            width: { type: 'number', description: 'ASCII art width in characters (default 64)' },
+          },
+          required: ['title'],
+        },
+      },
     ],
   };
 });
@@ -115,6 +127,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case 'osrs_get_extract': {
         const results = await client.page.getExtract(args.title as string);
         return { content: [{ type: 'text', text: JSON.stringify(results, null, 2) }] };
+      }
+
+      case 'osrs_render_image': {
+        try {
+          const width = (args.width as number) || 64;
+          const ascii = await client.page.renderImage(args.title as string, width);
+          return { content: [{ type: 'text', text: ascii }] };
+        } catch (err) {
+          return { content: [{ type: 'text', text: `Error: ${(err as Error).message}` }], isError: true };
+        }
       }
 
       default:

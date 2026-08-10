@@ -13,6 +13,6 @@
     "declarationMap": true,
     "sourceMap": true
   },
-  "include": ["server.ts", "sdk/**/*", "mcp/**/*", "scripts/**/*"],
+  "include": ["server.ts", "sdk/**/*", "mcp/**/*"],
   "exclude": ["node_modules", "dist"]
 }

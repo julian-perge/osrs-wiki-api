@@ -1,25 +1,31 @@
 {
-  "name": "osrs-wiki-api",
+  "name": "@deansasek/osrs-wiki-api",
   "version": "0.1.1",
-  "description": "Unofficial API wrapper for the Old School RuneScape Wiki",
+  "description": "SDK, REST API wrapper, and MCP server for the Old School RuneScape Wiki",
+  "author": "https://github.com/deansasek",
+  "type": "module",
   "main": "dist/server.js",
-  "types": "dist/server.d.ts",
+  "exports": {
+    ".": "./dist/server.js",
+    "./sdk": "./dist/sdk/index.js"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "dev": "tsc --watch",
-    "start": "node dist/server.js",
-    "mcp": "node dist/mcp/server.js",
-    "discover": "npx ts-node scripts/discover-apis.ts"
+    "dev": "tsx server.ts",
+    "mcp": "tsx mcp/server.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
-    "axios": "^1.7.0"
+    "axios": "^1.7.0",
+    "jimp": "^1.6.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.45.0",
     "@types/node": "^20.14.0",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.23.12",
     "typescript": "^5.5.0"
   },
   "engines": {
