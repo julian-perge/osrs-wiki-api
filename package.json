@@ -11,6 +11,7 @@
     "discover": "npx ts-node scripts/discover-apis.ts"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "axios": "^1.7.0"
   },
   "devDependencies": {

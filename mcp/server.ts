@@ -1,66 +1,136 @@
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
+
+import { OSRSWikiClient } from '../sdk/client.js';
+
 /**
- * MCP server for OSRS Wiki API.
- * Exposes search and page-fetch as Model Context Protocol tools.
+ * OSRS Wiki MCP Server
+ *
+ * Provides Claude Code tools for searching and fetching pages from the
+ * Old School RuneScape Wiki via the MediaWiki API.
  */
+const server = new Server(
+  {
+    name: 'osrs-wiki-api-mcp',
+    version: '1.0.0',
+  },
+  {
+    capabilities: {
+      tools: {},
+    },
+  }
+);
 
-import { OSRSWikiClient } from '../sdk/client';
-import { SearchResource } from '../sdk/resources/search';
-import { PageResource } from '../sdk/resources/page';
-
+/** SDK client shared across all tool calls */
 const client = new OSRSWikiClient();
 
-export const tools = [
-  {
-    name: 'osrs_search',
-    description: 'Search the Old School RuneScape Wiki',
-    input: {
-      type: 'object',
-      properties: {
-        query: { type: 'string', description: 'Search query' },
-        limit: { type: 'number', description: 'Max results (default 10)' },
-        offset: { type: 'number', description: 'Pagination offset' },
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  return {
+    tools: [
+      {
+        name: 'osrs_search',
+        description: 'Full-text search of the Old School RuneScape Wiki, returns structured results with snippets',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: { type: 'string', description: 'Search query' },
+            limit: { type: 'number', description: 'Max results (default 10)' },
+            offset: { type: 'number', description: 'Pagination offset' },
+            what: { type: 'string', enum: ['text', 'title', 'all'], description: 'Search scope (default: all)' },
+          },
+          required: ['query'],
+        },
       },
-      required: ['query'],
-    },
-    handler: async (opts: { query: string; limit?: number; offset?: number }) => {
-      return client.search.query(opts);
-    },
-  },
-  {
-    name: 'osrs_autocomplete',
-    description: 'Autocomplete suggestions from the OSRS Wiki',
-    input: {
-      type: 'object',
-      properties: {
-        query: { type: 'string', description: 'Partial search query' },
-        limit: { type: 'number', description: 'Max suggestions (default 10)' },
+      {
+        name: 'osrs_autocomplete',
+        description: 'Fast autocomplete/typeahead suggestions from the OSRS Wiki',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: { type: 'string', description: 'Partial search query' },
+            limit: { type: 'number', description: 'Max suggestions (default 10)' },
+          },
+          required: ['query'],
+        },
       },
-      required: ['query'],
-    },
-    handler: async (opts: { query: string; limit?: number }) => {
-      return client.search.autocomplete(opts);
-    },
-  },
-  {
-    name: 'osrs_get_page',
-    description: 'Fetch a wiki page by title',
-    input: {
-      type: 'object',
-      properties: {
-        title: { type: 'string', description: 'Page title' },
+      {
+        name: 'osrs_get_page',
+        description: 'Fetch a wiki page by title, returns full HTML, wikitext, categories, and links',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            title: { type: 'string', description: 'Page title (e.g. "Dragon Slayer II")' },
+          },
+          required: ['title'],
+        },
       },
-      required: ['title'],
-    },
-    handler: async (opts: { title: string }) => {
-      return client.page.getPage(opts.title);
-    },
-  },
-];
+      {
+        name: 'osrs_get_extract',
+        description: 'Fetch the plain-text intro/extract of a wiki page',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            title: { type: 'string', description: 'Page title' },
+          },
+          required: ['title'],
+        },
+      },
+    ],
+  };
+});
 
-// Simple handler for testing
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args = {} } = request.params;
+
+  try {
+    switch (name) {
+      case 'osrs_search': {
+        const results = await client.search.query({
+          query: args.query as string,
+          limit: (args.limit as number) || 10,
+          offset: (args.offset as number) || 0,
+          what: (args.what as 'text' | 'title' | 'all') || 'all',
+        });
+        return { content: [{ type: 'text', text: JSON.stringify(results, null, 2) }] };
+      }
+
+      case 'osrs_autocomplete': {
+        const results = await client.search.autocomplete({
+          query: args.query as string,
+          limit: (args.limit as number) || 10,
+        });
+        return { content: [{ type: 'text', text: JSON.stringify(results, null, 2) }] };
+      }
+
+      case 'osrs_get_page': {
+        const results = await client.page.getPage(args.title as string);
+        return { content: [{ type: 'text', text: JSON.stringify(results, null, 2) }] };
+      }
+
+      case 'osrs_get_extract': {
+        const results = await client.page.getExtract(args.title as string);
+        return { content: [{ type: 'text', text: JSON.stringify(results, null, 2) }] };
+      }
+
+      default:
+        return { content: [{ type: 'text', text: `Unknown tool: ${name}` }], isError: true };
+    }
+  } catch (error) {
+    return { content: [{ type: 'text', text: `Error: ${(error as Error).message}` }], isError: true };
+  }
+});
+
+/**
+ * Start the server
+ */
 async function main() {
-  const results = await client.search.query({ query: 'dragon', limit: 3 });
-  console.log(JSON.stringify(results, null, 2));
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error('OSRS Wiki MCP server started');
 }
 
 main().catch(console.error);
