@@ -89,11 +89,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     switch (name) {
       case 'osrs_search': {
+        const what = args.what as 'text' | 'title' | undefined;
         const results = await client.search.query({
           query: args.query as string,
           limit: (args.limit as number) || 10,
           offset: (args.offset as number) || 0,
-          what: (args.what as 'text' | 'title' | 'all') || 'all',
+          ...(what ? { what } : {}),
         });
         return { content: [{ type: 'text', text: JSON.stringify(results, null, 2) }] };
       }

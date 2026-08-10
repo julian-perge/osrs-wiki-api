@@ -1,5 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { OSRSWikiClientOptions, OSRSWikiError } from './types';
+import { OSRSWikiClientOptions } from './types';
+import { OSRSWikiError } from './errors';
+import { BASE_URL, DEFAULT_TIMEOUT, DEFAULT_USER_AGENT } from './constants';
 import { SearchResource } from './resources/search';
 import { PageResource } from './resources/page';
 
@@ -11,17 +13,16 @@ export class OSRSWikiClient {
   protected readonly baseUrl: string;
 
   constructor(options: OSRSWikiClientOptions = {}) {
-    this.baseUrl = options.baseUrl ?? 'https://oldschool.runescape.wiki';
+    this.baseUrl = options.baseUrl ?? BASE_URL;
     this.http = axios.create({
       baseURL: this.baseUrl,
-      timeout: options.timeout ?? 10000,
+      timeout: options.timeout ?? DEFAULT_TIMEOUT,
       headers: {
-        'User-Agent': options.userAgent ?? 'osrs-wiki-api/0.1 (TypeScript API wrapper)',
+        'User-Agent': options.userAgent ?? DEFAULT_USER_AGENT,
         'Accept': 'application/json',
       },
     });
 
-    // Wire up resources with a reference to this client for shared fetch
     this.search = new SearchResource(this);
     this.page = new PageResource(this);
   }
@@ -36,7 +37,10 @@ export class OSRSWikiClient {
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const status = err.response?.status;
-        const message = err.response?.data?.toString() ?? err.message;
+        const data = err.response?.data;
+        const message = typeof data === 'string'
+          ? data
+          : JSON.stringify(data) ?? err.message;
         throw new OSRSWikiError(message, undefined, status);
       }
       throw err;

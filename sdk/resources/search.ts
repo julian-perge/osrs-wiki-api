@@ -36,9 +36,21 @@ export class SearchResource {
    * Endpoint: ?action=query&list=search
    */
   async query(options: SearchOptions): Promise<SearchResponse> {
-    const { query, limit = 10, offset = 0, what = 'all' } = options;
+    const { query, limit = 10, offset = 0, what } = options;
 
-    const raw = await this.client.get({ action: 'query', list: 'search', srsearch: query, srlimit: limit, sroffset: offset, srwhat: what }) as MediaWikiSearchResponse;
+    const params: Record<string, unknown> = {
+      action: 'query',
+      list: 'search',
+      srsearch: query,
+      srlimit: limit,
+      sroffset: offset,
+    };
+    // 'all' is the default (omit srwhat); only set when explicitly text or title
+    if (what) {
+      params.srwhat = what;
+    }
+
+    const raw = await this.client.get(params) as MediaWikiSearchResponse;
 
     const results: SearchResult[] = (raw.query?.search ?? []).map((r) => ({
       pageid: r.pageid,
@@ -63,20 +75,14 @@ export class SearchResource {
   async autocomplete(options: OpenSearchOptions): Promise<OpenSearchResponse> {
     const { query, limit = 10 } = options;
 
-    const data = await this.client.get<MediaWikiOpenSearchResponse>({
-      action: 'opensearch',
-      search: query,
-      limit,
-      namespace: 0,
-    });
+    const raw = await this.client.get({ action: 'opensearch', search: query, limit, namespace: 0 }) as MediaWikiOpenSearchResponse;
 
-    // OpenSearch returns [query, titles[], descriptions[], urls[]]
-    const results: OpenSearchResult[] = ((data[1] as unknown as string[]) ?? []).map((title, i) => ({
+    const results: OpenSearchResult[] = ((raw[1] as unknown as string[]) ?? []).map((title, i) => ({
       title,
-      description: (data[2] as unknown as string[])?.[i] ?? undefined,
-      url: (data[3] as unknown as string[])?.[i] ?? undefined,
+      description: (raw[2] as unknown as string[])?.[i] ?? undefined,
+      url: (raw[3] as unknown as string[])?.[i] ?? undefined,
     }));
 
-    return { results, query: (data[0] as string) ?? query };
+    return { results, query: (raw[0] as string) ?? query };
   }
 }

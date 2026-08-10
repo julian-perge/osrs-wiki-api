@@ -15,7 +15,7 @@ export { OSRSWikiClient, OSRSWikiClientOptions };
 
 export async function search(
   query: string,
-  options?: { limit?: number; offset?: number; what?: 'text' | 'title' | 'all' }
+  options?: { limit?: number; offset?: number; what?: 'text' | 'title' }
 ) {
   return defaultClient.search.query({ query, ...options });
 }

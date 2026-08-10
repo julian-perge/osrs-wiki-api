@@ -14,7 +14,7 @@ export interface SearchOptions {
   query: string;
   limit?: number;
   offset?: number;
-  what?: 'text' | 'title' | 'all';
+  what?: 'text' | 'title';
 }
 
 export interface SearchResult {
@@ -37,11 +37,6 @@ export interface SearchResponse {
 // Page
 // ============================================================
 
-export interface PageOptions {
-  title: string;
-  redirect?: boolean;
-}
-
 export interface PageContent {
   pageid: number;
   title: string;
@@ -51,10 +46,6 @@ export interface PageContent {
   links?: string[];
   images?: string[];
   timestamp?: string;
-}
-
-export interface PageParseResponse {
-  page: PageContent;
 }
 
 // ============================================================
@@ -75,19 +66,4 @@ export interface OpenSearchResult {
 export interface OpenSearchResponse {
   results: OpenSearchResult[];
   query: string;
-}
-
-// ============================================================
-// Error
-// ============================================================
-
-export class OSRSWikiError extends Error {
-  constructor(
-    message: string,
-    public readonly code?: string,
-    public readonly statusCode?: number
-  ) {
-    super(message);
-    this.name = 'OSRSWikiError';
-  }
 }

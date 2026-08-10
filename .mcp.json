@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "osrs-wiki-api-mcp": {
+      "command": "node",
+      "args": ["dist/mcp/server.js"],
+      "cwd": "/Users/deansasek/Documents/Projects/osrs-wiki-api"
+    }
+  }
+}

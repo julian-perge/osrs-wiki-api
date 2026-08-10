@@ -6,8 +6,10 @@
   "types": "dist/server.d.ts",
   "scripts": {
     "build": "tsc",
+    "clean": "rm -rf dist",
     "dev": "tsc --watch",
     "start": "node dist/server.js",
+    "mcp": "node dist/mcp/server.js",
     "discover": "npx ts-node scripts/discover-apis.ts"
   },
   "dependencies": {
