@@ -42,14 +42,14 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add package.json
-          git commit -m \"chore: bump version\"
-          git tag \"v\$(node -p \"require('./package.json').version\")\"
+          git commit -m 'chore: bump version'
+          git tag "v$(node -p \"require('./package.json').version\")"
           git push origin main --follow-tags
-          echo \"@deansasek:registry=https://npm.pkg.github.com\" >> ~/.npmrc
-          echo \"//npm.pkg.github.com/:_authToken=\${{ secrets.NPM_TOKEN }}\" >> ~/.npmrc
+          echo "@deansasek:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
           npm publish
 
       - name: Log skipped run
         if: steps.check.outputs.skip == 'true'
         run: |
-          echo \"Version \${{ steps.check.outputs.tag }} already published, skipping\"
+          echo "Version ${{ steps.check.outputs.tag }} already published, skipping"
