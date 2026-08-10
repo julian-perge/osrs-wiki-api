@@ -1,5 +1,5 @@
 {
-  "name": "@deansasek/osrs-wiki-api",
+  "name": "osrs-wiki-api",
   "version": "0.1.2",
   "description": "SDK, REST API wrapper, and MCP server for the Old School RuneScape Wiki",
   "author": "https://github.com/deansasek",
