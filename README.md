@@ -7,7 +7,7 @@ An SDK and REST API wrapper for the [Old School RuneScape Wiki](https://oldschoo
 ## Installation
 
 ```bash
-npm install osrs-wiki-api
+npm install @deansasek/osrs-wiki-api
 ```
 
 ## SDK
@@ -15,7 +15,7 @@ npm install osrs-wiki-api
 The SDK provides a typed, class-based interface organized by resource.
 
 ```typescript
-import { OSRSWikiClient } from 'osrs-wiki-api/sdk';
+import { OSRSWikiClient } from '@deansasek/osrs-wiki-api/sdk';
 
 const client = new OSRSWikiClient();
 
@@ -49,7 +49,7 @@ const ascii = await client.page.renderImage('Abyssal whip', 64);
 Flat function exports for direct API access.
 
 ```typescript
-import { search, autocomplete, getPage, getExtract, renderImage } from 'osrs-wiki-api';
+import { search, autocomplete, getPage, getExtract, renderImage } from '@deansasek/osrs-wiki-api';
 ```
 
 ### search(query, options?)
@@ -118,7 +118,7 @@ Claude Code automatically detects `.mcp.json`:
 ```json
 {
   "mcpServers": {
-    "osrs-wiki-api-mcp": {
+    "@deansasek/osrs-wiki-api-mcp": {
       "command": "node",
       "args": ["dist/mcp/server.js"]
     }
