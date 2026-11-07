@@ -14,6 +14,8 @@ export const DEFAULT_TIMEOUT = 10000;
 
 /**
  * Default User-Agent sent with every API request.
- * Identifies this library to the wiki's servers.
+ * The OSRS Wiki API policy asks for a User-Agent that names the project and
+ * gives a way to contact its maintainer, so this points at the repository.
+ * Applications should pass their own userAgent with their own contact details.
  */
-export const DEFAULT_USER_AGENT = 'osrs-wiki-api/0.1 (TypeScript API wrapper)';
+export const DEFAULT_USER_AGENT = 'osrs-wiki-api/0.1 (+https://github.com/deansasek/osrs-wiki-api)';
