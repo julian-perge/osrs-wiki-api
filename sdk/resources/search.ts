@@ -12,6 +12,7 @@ interface MediaWikiSearchResponse {
   batchcomplete?: string;
   query?: {
     search?: Array<{
+      ns?: number;
       pageid: number;
       title: string;
       snippet: string;
@@ -19,14 +20,14 @@ interface MediaWikiSearchResponse {
       wordcount?: number;
       timestamp?: string;
     }>;
-    'search-info'?: {
+    searchinfo?: {
       totalhits?: number;
       suggestion?: string;
     };
   };
 }
 
-type MediaWikiOpenSearchResponse = [string, string[], string?, string?];
+type MediaWikiOpenSearchResponse = [string, string[], string[]?, string[]?];
 
 /**
  * Search and autocomplete for wiki pages.
@@ -78,11 +79,12 @@ export class SearchResource {
       size: r.size,
       wordcount: r.wordcount,
       timestamp: r.timestamp,
+      ns: r.ns,
     }));
 
     return {
       results,
-      totalhits: raw.query?.['search-info']?.totalhits,
+      totalhits: raw.query?.searchinfo?.totalhits,
       query,
     };
   }
@@ -107,12 +109,12 @@ export class SearchResource {
 
     const raw = await this.client.get({ action: 'opensearch', search: query, limit, namespace: 0 }) as MediaWikiOpenSearchResponse;
 
-    const results: OpenSearchResult[] = ((raw[1] as unknown as string[]) ?? []).map((title, i) => ({
+    const results: OpenSearchResult[] = (raw[1] ?? []).map((title, i) => ({
       title,
-      description: (raw[2] as unknown as string[])?.[i] ?? undefined,
-      url: (raw[3] as unknown as string[])?.[i] ?? undefined,
+      description: raw[2]?.[i] || undefined,
+      url: raw[3]?.[i],
     }));
 
-    return { results, query: (raw[0] as string) ?? query };
+    return { results, query: raw[0] ?? query };
   }
 }
