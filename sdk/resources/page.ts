@@ -1,4 +1,5 @@
 import type { OSRSWikiClient } from '../client.js';
+import { NotFoundError, OSRSWikiError } from '../errors.js';
 import type { PageContent } from '../types.js';
 
 interface MediaWikiParseResponse {
@@ -20,6 +21,7 @@ interface MediaWikiQueryResponse {
       pageid?: number;
       title?: string;
       extract?: string;
+      missing?: string;
       categories?: Array<{ title: string }>;
       imageinfo?: Array<{ url: string }>;
     }>;
@@ -29,6 +31,7 @@ interface MediaWikiQueryResponse {
 interface ImageInfoResponse {
   query?: {
     pages?: Record<string, {
+      missing?: string;
       imageinfo?: Array<{ url: string }>;
     }>;
   };
@@ -58,11 +61,16 @@ export class PageResource {
    * console.log(page.images);     // ['Abyssal_whip.png', ...]
    */
   async getPage(title: string): Promise<PageContent> {
-    const raw = await this.client.get({ action: 'parse', page: title, redirect: true, prop: 'text|wikitext|categories|links|images' }) as MediaWikiParseResponse;
+    const raw = await this.client
+      .get({ action: 'parse', page: title, redirect: true, prop: 'text|wikitext|categories|links|images' })
+      .catch((err) => {
+        if (err instanceof OSRSWikiError && err.code === 'missingtitle') throw new NotFoundError(title);
+        throw err;
+      }) as MediaWikiParseResponse;
 
     const p = raw.parse;
     if (!p) {
-      throw new Error(`Page not found: ${title}`);
+      throw new NotFoundError(title);
     }
 
     return {
@@ -95,11 +103,9 @@ export class PageResource {
   async getExtract(title: string): Promise<string> {
     const raw = await this.client.get({ action: 'query', titles: title, prop: 'extracts', exintro: true, explaintext: true }) as MediaWikiQueryResponse;
 
-    const pages = raw.query?.pages;
-    if (!pages) return '';
-
-    const page = Object.values(pages)[0];
-    return page?.extract ?? '';
+    const page = Object.values(raw.query?.pages ?? {})[0];
+    if (!page || page.missing !== undefined) throw new NotFoundError(title);
+    return page.extract ?? '';
   }
 
   /**
@@ -127,10 +133,9 @@ export class PageResource {
       iiprop: 'url',
     }) as ImageInfoResponse;
 
-    const pages = raw.query?.pages;
-    if (!pages) throw new Error(`Image not found: ${filename}`);
-    const page = Object.values(pages)[0];
-    return page?.imageinfo?.[0]?.url ?? '';
+    const url = Object.values(raw.query?.pages ?? {})[0]?.imageinfo?.[0]?.url;
+    if (!url) throw new NotFoundError(`File:${cleanName}`);
+    return url;
   }
 
   /**
@@ -156,7 +161,7 @@ export class PageResource {
    */
   async renderImage(title: string, width = 64): Promise<string> {
     const page = await this.getPage(title);
-    if (!page.images?.length) throw new Error(`No images on page: ${title}`);
+    if (!page.images?.length) throw new OSRSWikiError(`No images on page: ${title}`, 'NOT_FOUND');
 
     const imageUrl = await this.getImageUrl(page.images[0]);
 

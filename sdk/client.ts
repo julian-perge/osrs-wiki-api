@@ -57,7 +57,7 @@ export class OSRSWikiClient {
    * @param params - MediaWiki API parameters (action, prop, etc.)
    * @param config - Optional axios request config
    * @returns Parsed JSON response
-   * @throws {OSRSWikiError} On network or API error
+   * @throws {OSRSWikiError} On network error, or when MediaWiki answers with an error object (code is the MediaWiki error code)
    */
   async get<T = unknown>(params: Record<string, unknown>, config?: AxiosRequestConfig): Promise<T> {
     try {
@@ -65,6 +65,10 @@ export class OSRSWikiClient {
         params: { format: 'json', ...params },
         ...config,
       });
+      const body = response.data as { error?: { code?: string; info?: string } } | null;
+      if (body && typeof body === 'object' && body.error) {
+        throw new OSRSWikiError(body.error.info ?? 'MediaWiki API error', body.error.code, response.status);
+      }
       return response.data;
     } catch (err) {
       if (axios.isAxiosError(err)) {
