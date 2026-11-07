@@ -9,6 +9,9 @@
     ".": "./dist/server.js",
     "./sdk": "./dist/sdk/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
@@ -17,7 +20,8 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist",
     "dev": "bun run server.ts",
-    "mcp": "bun run mcp/server.ts"
+    "mcp": "bun run mcp/server.ts",
+    "prepublishOnly": "bun run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
