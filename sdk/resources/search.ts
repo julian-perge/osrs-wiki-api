@@ -92,7 +92,7 @@ export class SearchResource {
   /**
    * Fast autocomplete/typeahead suggestions as the user types.
    *
-   * Uses MediaWiki's `opensearch` action — optimized for real-time suggestions.
+   * Uses MediaWiki's `opensearch` action, optimized for real-time suggestions.
    *
    * @param options - Autocomplete options
    * @param options.query - Partial query string (min 1 character)

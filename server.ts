@@ -106,7 +106,7 @@ export async function getExtract(title: string) {
  *
  * @example
  * const page = await getPage('Abyssal whip');
- * const url = await defaultClient.page.getImageUrl(page.images[0]);
+ * const url = await getImageUrl(page.images[0]);
  * // 'https://oldschool.runescape.wiki/images/Abyssal_whip.png'
  */
 export async function getImageUrl(filename: string) {

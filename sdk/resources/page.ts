@@ -88,7 +88,7 @@ export class PageResource {
   /**
    * Fetch the plain-text intro/extract of a wiki page.
    *
-   * Returns only the opening paragraphs before the first section heading —
+   * Returns only the opening paragraphs before the first section heading,
    * suitable for item descriptions, quest summaries, and quick lookups.
    * Use {@link getPage} when you need full HTML, wikitext, or image filenames.
    *
