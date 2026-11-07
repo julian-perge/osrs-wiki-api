@@ -101,7 +101,7 @@ export class PageResource {
    * // 'The abyssal whip is a level 70 melee weapon that requires 70 Attack...'
    */
   async getExtract(title: string): Promise<string> {
-    const raw = await this.client.get({ action: 'query', titles: title, prop: 'extracts', exintro: true, explaintext: true }) as MediaWikiQueryResponse;
+    const raw = await this.client.get({ action: 'query', titles: title, redirects: true, prop: 'extracts', exintro: true, explaintext: true }) as MediaWikiQueryResponse;
 
     const page = Object.values(raw.query?.pages ?? {})[0];
     if (!page || page.missing !== undefined) throw new NotFoundError(title);
