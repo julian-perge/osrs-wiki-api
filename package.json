@@ -10,9 +10,6 @@
     ".": "./dist/server.js",
     "./sdk": "./dist/sdk/index.js"
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
