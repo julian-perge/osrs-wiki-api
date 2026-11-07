@@ -12,7 +12,7 @@ import { PageResource } from './resources/page.js';
  * Manages HTTP communication and provides resource-based access to API endpoints.
  *
  * @example
- * import { OSRSWikiClient } from '@deansasek/osrs-wiki-api/sdk';
+ * import { OSRSWikiClient } from '@julian-perge/osrs-wiki-api/sdk';
  *
  * const client = new OSRSWikiClient();
  * const results = await client.search.query({ query: 'zulrah' });

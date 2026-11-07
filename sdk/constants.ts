@@ -18,4 +18,4 @@ export const DEFAULT_TIMEOUT = 10000;
  * gives a way to contact its maintainer, so this points at the repository.
  * Applications should pass their own userAgent with their own contact details.
  */
-export const DEFAULT_USER_AGENT = 'osrs-wiki-api/0.1 (+https://github.com/deansasek/osrs-wiki-api)';
+export const DEFAULT_USER_AGENT = 'osrs-wiki-api/0.1 (+https://github.com/julian-perge/osrs-wiki-api)';

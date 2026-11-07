@@ -5,7 +5,7 @@
  * Mirrors the SDK interface with standalone functions backed by a shared client.
  *
  * @example
- * import { search, getPage } from '@deansasek/osrs-wiki-api';
+ * import { search, getPage } from '@julian-perge/osrs-wiki-api';
  *
  * const results = await search('dragon slayer');
  * const page = await getPage('Dragon Slayer');

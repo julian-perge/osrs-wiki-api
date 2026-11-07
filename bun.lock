@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "@deansasek/osrs-wiki-api",
+      "name": "@julian-perge/osrs-wiki-api",
       "dependencies": {
         "@modelcontextprotocol/sdk": "^1.30.0",
         "axios": "^1.7.0",

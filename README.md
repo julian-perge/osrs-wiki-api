@@ -7,17 +7,17 @@ An SDK and REST API wrapper for the [Old School RuneScape Wiki](https://oldschoo
 ## Installation
 
 ```bash
-bun add @deansasek/osrs-wiki-api
+bun add @julian-perge/osrs-wiki-api
 ```
 
-The package is published to GitHub Packages, so the `@deansasek` scope must point at `https://npm.pkg.github.com` (see `.npmrc`).
+The package is published to GitHub Packages, so the `@julian-perge` scope must point at `https://npm.pkg.github.com` (see `.npmrc`).
 
 ## SDK
 
 The SDK provides a typed, class-based interface organized by resource.
 
 ```typescript
-import { OSRSWikiClient } from '@deansasek/osrs-wiki-api/sdk';
+import { OSRSWikiClient } from '@julian-perge/osrs-wiki-api/sdk';
 
 const client = new OSRSWikiClient();
 
@@ -57,7 +57,7 @@ const client = new OSRSWikiClient({ userAgent: 'my-app/1.0 (you@example.com)' })
 Flat function exports for direct API access.
 
 ```typescript
-import { search, autocomplete, getPage, getExtract, renderImage } from '@deansasek/osrs-wiki-api';
+import { search, autocomplete, getPage, getExtract, renderImage } from '@julian-perge/osrs-wiki-api';
 ```
 
 ### search(query, options?)
@@ -124,7 +124,7 @@ The MCP server enables Claude Code to interact with the OSRS Wiki directly.
 The server runs from the TypeScript source with [Bun](https://bun.sh), no build step needed. Clone the repo and install its dependencies first:
 
 ```bash
-git clone https://github.com/deansasek/osrs-wiki-api.git
+git clone git@github.com:julian-perge/osrs-wiki-api.git
 cd osrs-wiki-api
 bun install
 ```

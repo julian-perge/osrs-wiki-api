@@ -20,7 +20,7 @@ export interface OSRSWikiClientOptions {
 
   /**
    * Custom User-Agent string sent with every request.
-   * @default 'osrs-wiki-api/0.1 (+https://github.com/deansasek/osrs-wiki-api)'
+   * @default 'osrs-wiki-api/0.1 (+https://github.com/julian-perge/osrs-wiki-api)'
    */
   userAgent?: string;
 }
