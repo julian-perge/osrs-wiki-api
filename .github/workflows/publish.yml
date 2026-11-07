@@ -13,6 +13,18 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Type check
+        run: bun run typecheck
 
       - name: Check if already tagged
         id: check
@@ -29,8 +41,10 @@ jobs:
       - name: Bump version, commit, tag, and publish
         if: steps.check.outputs.skip != 'true'
         id: bump
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          node -e "
+          bun -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
             const [major, minor, patch] = pkg.version.split('.').map(Number);
@@ -43,10 +57,10 @@ jobs:
           git config user.email "github-actions@github.com"
           git add package.json
           git commit -m 'chore: bump version'
-          git tag "v$(node -p "require('./package.json').version")"
+          git tag "v$(bun -p "require('./package.json').version")"
           git push origin main --follow-tags
           echo "@deansasek:registry=https://npm.pkg.github.com" >> ~/.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
           npm publish
 
       - name: Log skipped run
