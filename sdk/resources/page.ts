@@ -166,8 +166,7 @@ export class PageResource {
     const imageUrl = await this.getImageUrl(page.images[0]);
 
     const { Jimp } = await import('jimp');
-    const imageBuffer = await fetch(imageUrl).then((r) => r.arrayBuffer());
-    const image = await Jimp.read(Buffer.from(imageBuffer));
+    const image = await Jimp.read(await this.client.getBuffer(imageUrl));
 
     const aspectRatio = image.height / image.width;
     const scaledHeight = Math.round(width * aspectRatio * 0.5);

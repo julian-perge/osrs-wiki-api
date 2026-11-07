@@ -84,6 +84,25 @@ export class OSRSWikiClient {
   }
 
   /**
+   * Download a file, such as an image URL from getImageUrl, with this client's User-Agent and timeout.
+   *
+   * @param url - Absolute URL to download
+   * @returns Response body
+   * @throws {OSRSWikiError} On network error or a non-2xx response
+   */
+  async getBuffer(url: string): Promise<Buffer> {
+    try {
+      const response = await this.http.get<ArrayBuffer>(url, { responseType: 'arraybuffer' });
+      return Buffer.from(response.data);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        throw new OSRSWikiError(`Download failed for ${url}: ${err.message}`, undefined, err.response?.status);
+      }
+      throw err;
+    }
+  }
+
+  /**
    * Get the configured base URL.
    *
    * @returns The base URL string (e.g. 'https://oldschool.runescape.wiki')
