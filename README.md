@@ -4,20 +4,25 @@ An SDK and REST API wrapper for the [Old School RuneScape Wiki](https://oldschoo
 
 > **Disclaimer:** This SDK, REST API wrapper, and MCP server is an unofficial tool created for educational purposes only. It is not affiliated with, maintained, or endorsed by Jagex or the Old School RuneScape Wiki.
 
-## Installation
+## Setup
+
+This package is not published to npm. Use it from a local clone with [Bun](https://bun.sh):
 
 ```bash
-bun add @julian-perge/osrs-wiki-api
+git clone git@github.com:julian-perge/osrs-wiki-api.git
+cd osrs-wiki-api
+bun install
+bun run typecheck
 ```
 
-The package is published to GitHub Packages, so the `@julian-perge` scope must point at `https://npm.pkg.github.com` (see `.npmrc`).
+Bun runs the TypeScript source directly, so no build step is needed. The import examples below are written for a script at the root of the clone. From somewhere else, import from the absolute path of your clone instead, such as `/absolute/path/to/osrs-wiki-api/sdk`.
 
 ## SDK
 
 The SDK provides a typed, class-based interface organized by resource.
 
 ```typescript
-import { OSRSWikiClient } from '@julian-perge/osrs-wiki-api/sdk';
+import { OSRSWikiClient } from './sdk';
 
 const client = new OSRSWikiClient();
 
@@ -57,7 +62,7 @@ const client = new OSRSWikiClient({ userAgent: 'my-app/1.0 (you@example.com)' })
 Flat function exports for direct API access.
 
 ```typescript
-import { search, autocomplete, getPage, getExtract, renderImage } from '@julian-perge/osrs-wiki-api';
+import { search, autocomplete, getPage, getExtract, renderImage } from './server';
 ```
 
 ### search(query, options?)
@@ -119,14 +124,12 @@ const ascii = await renderImage('Abyssal whip', 64);
 
 The MCP server enables Claude Code to interact with the OSRS Wiki directly.
 
-### Installation
+### Running the server
 
-The server runs from the TypeScript source with [Bun](https://bun.sh), no build step needed. Clone the repo and install its dependencies first:
+The server speaks MCP over stdio. After the [setup](#setup) steps, start it from the clone with:
 
 ```bash
-git clone git@github.com:julian-perge/osrs-wiki-api.git
-cd osrs-wiki-api
-bun install
+bun run mcp
 ```
 
 Inside this repo, Claude Code picks up the bundled `.mcp.json`. To use the server from another project, add it to that project's `.mcp.json` with the absolute path to your clone:
@@ -181,7 +184,7 @@ Claude uses: osrs_render_image with title="Abyssal whip", width=64
 ```bash
 bun install          # Install dependencies
 bun run typecheck    # Type check without emitting
-bun run build        # Compile TypeScript to dist/ for publishing
+bun run build        # Compile TypeScript to dist/
 bun run clean        # Remove dist folder
 bun run dev          # Run server.ts directly
 bun run mcp          # Run MCP server directly
@@ -192,7 +195,7 @@ bun run mcp          # Run MCP server directly
 ## Environment
 
 - **Bun** 1.4+ to run from source and for development
-- **Node.js** 18+ to use the published package
+- **Node.js** 18+ to run the compiled `dist/` output
 - TypeScript with strict mode
 
 ---

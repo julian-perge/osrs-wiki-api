@@ -1,6 +1,7 @@
 {
   "name": "@julian-perge/osrs-wiki-api",
   "version": "0.1.5",
+  "private": true,
   "description": "SDK, REST API wrapper, and MCP server for the Old School RuneScape Wiki",
   "author": "julian-perge",
   "type": "module",
@@ -12,16 +13,12 @@
   "files": [
     "dist"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist",
     "dev": "bun run server.ts",
-    "mcp": "bun run mcp/server.ts",
-    "prepublishOnly": "bun run build"
+    "mcp": "bun run mcp/server.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
