@@ -11,12 +11,13 @@
  * const page = await getPage('Dragon Slayer');
  */
 
-import { OSRSWikiClient, OSRSWikiClientOptions } from './sdk';
+import { OSRSWikiClient, type OSRSWikiClientOptions } from './sdk/index.js';
 
 // Default shared client instance used by all exported functions
 const defaultClient = new OSRSWikiClient();
 
-export { OSRSWikiClient, OSRSWikiClientOptions };
+export { OSRSWikiClient };
+export type { OSRSWikiClientOptions };
 
 // ── Search ───────────────────────────────────────────────────────────────────
 

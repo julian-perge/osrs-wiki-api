@@ -1,5 +1,5 @@
-import { OSRSWikiClient } from '../client';
-import { PageContent } from '../types';
+import type { OSRSWikiClient } from '../client.js';
+import type { PageContent } from '../types.js';
 
 interface MediaWikiParseResponse {
   parse?: {

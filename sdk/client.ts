@@ -1,9 +1,9 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { OSRSWikiClientOptions } from './types';
-import { OSRSWikiError } from './errors';
-import { BASE_URL, DEFAULT_TIMEOUT, DEFAULT_USER_AGENT } from './constants';
-import { SearchResource } from './resources/search';
-import { PageResource } from './resources/page';
+import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios';
+import type { OSRSWikiClientOptions } from './types.js';
+import { OSRSWikiError } from './errors.js';
+import { BASE_URL, DEFAULT_TIMEOUT, DEFAULT_USER_AGENT } from './constants.js';
+import { SearchResource } from './resources/search.js';
+import { PageResource } from './resources/page.js';
 
 /**
  * OSRS Wiki API Client

@@ -1,12 +1,12 @@
-import { OSRSWikiClient } from '../client';
-import {
+import type { OSRSWikiClient } from '../client.js';
+import type {
   SearchOptions,
   SearchResponse,
   SearchResult,
   OpenSearchOptions,
   OpenSearchResponse,
   OpenSearchResult,
-} from '../types';
+} from '../types.js';
 
 interface MediaWikiSearchResponse {
   batchcomplete?: string;
