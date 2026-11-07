@@ -1,14 +1,16 @@
 # OSRS Wiki API
 
-An SDK and REST API wrapper for the [Old School RuneScape Wiki](https://oldschool.runescape.wiki/) providing structured access to wiki content via the MediaWiki API — with an MCP server for Claude Code integration.
+An SDK and REST API wrapper for the [Old School RuneScape Wiki](https://oldschool.runescape.wiki/) providing structured access to wiki content via the MediaWiki API, with an MCP server for Claude Code integration.
 
 > **Disclaimer:** This SDK, REST API wrapper, and MCP server is an unofficial tool created for educational purposes only. It is not affiliated with, maintained, or endorsed by Jagex or the Old School RuneScape Wiki.
 
 ## Installation
 
 ```bash
-npm install @deansasek/osrs-wiki-api
+bun add @deansasek/osrs-wiki-api
 ```
+
+The package is published to GitHub Packages, so the `@deansasek` scope must point at `https://npm.pkg.github.com` (see `.npmrc`).
 
 ## SDK
 
@@ -33,6 +35,12 @@ const extract = await client.page.getExtract('Abyssal whip');
 
 // Render an image as ASCII art
 const ascii = await client.page.renderImage('Abyssal whip', 64);
+```
+
+The OSRS Wiki asks API clients to send a User-Agent that names the project and gives a way to contact its maintainer. Pass your own:
+
+```typescript
+const client = new OSRSWikiClient({ userAgent: 'my-app/1.0 (you@example.com)' });
 ```
 
 ### SDK Resources
@@ -113,17 +121,31 @@ The MCP server enables Claude Code to interact with the OSRS Wiki directly.
 
 ### Installation
 
-Claude Code automatically detects `.mcp.json`:
+The server runs from the TypeScript source with [Bun](https://bun.sh), no build step needed. Clone the repo and install its dependencies first:
+
+```bash
+git clone https://github.com/deansasek/osrs-wiki-api.git
+cd osrs-wiki-api
+bun install
+```
+
+Inside this repo, Claude Code picks up the bundled `.mcp.json`. To use the server from another project, add it to that project's `.mcp.json` with the absolute path to your clone:
 
 ```json
 {
   "mcpServers": {
-    "@deansasek/osrs-wiki-api-mcp": {
-      "command": "node",
-      "args": ["dist/mcp/server.js"]
+    "osrs-wiki-api-mcp": {
+      "command": "bun",
+      "args": ["run", "/absolute/path/to/osrs-wiki-api/mcp/server.ts"]
     }
   }
 }
+```
+
+Or register it from the command line:
+
+```bash
+claude mcp add osrs-wiki-api-mcp -- bun run /absolute/path/to/osrs-wiki-api/mcp/server.ts
 ```
 
 ### Available MCP Tools
@@ -145,7 +167,7 @@ Claude uses: osrs_search with query="dragon slayer"
 User: What items are in the Fight Arena quest?
 Claude uses: osrs_get_page with title="Fight Arena"
 
-User: Give me a quick summary of the Kal'gerion demon
+User: Give me a quick summary of the Kalphite Queen
 Claude uses: osrs_get_extract with title="Kalphite Queen"
 
 User: Show me the Abyssal whip as ASCII art
@@ -157,17 +179,20 @@ Claude uses: osrs_render_image with title="Abyssal whip", width=64
 ## Development
 
 ```bash
-npm run build    # Compile TypeScript
-npm run clean    # Remove dist folder
-npm run dev      # Run server.ts directly
-npm run mcp      # Run MCP server directly
+bun install          # Install dependencies
+bun run typecheck    # Type check without emitting
+bun run build        # Compile TypeScript to dist/ for publishing
+bun run clean        # Remove dist folder
+bun run dev          # Run server.ts directly
+bun run mcp          # Run MCP server directly
 ```
 
 ---
 
 ## Environment
 
-- **Node.js** 18+ recommended
+- **Bun** 1.4+ to run from source and for development
+- **Node.js** 18+ to use the published package
 - TypeScript with strict mode
 
 ---
