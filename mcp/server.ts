@@ -101,7 +101,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     switch (name) {
       case 'osrs_search': {
-        const what = args.what as 'text' | 'title' | undefined;
+        const what = args.what === 'text' || args.what === 'title' ? args.what : undefined;
         const results = await client.search.query({
           query: args.query as string,
           limit: (args.limit as number) || 10,
@@ -130,13 +130,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'osrs_render_image': {
-        try {
-          const width = (args.width as number) || 64;
-          const ascii = await client.page.renderImage(args.title as string, width);
-          return { content: [{ type: 'text', text: ascii }] };
-        } catch (err) {
-          return { content: [{ type: 'text', text: `Error: ${(err as Error).message}` }], isError: true };
-        }
+        const width = (args.width as number) || 64;
+        const ascii = await client.page.renderImage(args.title as string, width);
+        return { content: [{ type: 'text', text: ascii }] };
       }
 
       default:
@@ -156,4 +152,7 @@ async function main() {
   console.error('OSRS Wiki MCP server started');
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
